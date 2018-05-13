@@ -1,22 +1,46 @@
 import json
+import csv
 import requests
 
-class GBFSClient(object):
-    """GBFS client
+class ClientBase(object):
+    """GBFS client base class
 
     Attributes
     ----------
     systems_url : str
-        Default url to list containing all known systems publishing GBFS feeds.
-    feed_names
+        Url to systems.csv file containing all known systems publishing GBFS feeds.
+    """
+    systems_url = 'https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv'
+
+    def __init__(self):
+        request = self._fetch(self.systems_url)
+
+        if request.status_code == 200:
+            reader = csv.DictReader(request.iter_lines())
+            self.systems = {}
+            for d in reader:
+                system_id, url = d['System ID'], d['Auto-Discovery URL']
+                self.systems[system_id] = url
+
+    @property
+    def system_names(self):
+        if len(self.systems) > 0:
+            return self.systems.keys()
+        
+    @staticmethod
+    def _fetch(url):
+        """Fires off a GET request against url"""
+        r = requests.get(url)
+        return r
+
+class GBFSClient(ClientBase):
+    """GBFS client
 
     Methods
     -------
     request_feed(feed_name)
         Fetches json feed from server.
     """    
-
-    systems_url = 'https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv'
 
     def __init__(self, url, language):
         """Constructs a GBFSClient
@@ -32,6 +56,8 @@ class GBFSClient(object):
         -------
         GBFSClient
         """
+        super(GBFSClient, self).__init__()
+
         r = self._fetch(url)
         
         data = r.json().get('data')
@@ -80,12 +106,4 @@ class GBFSClient(object):
 
         return r.json()
 
-    def _fetch(self, url):
-        """Fires off a GET request against url"""
-        r = requests.get(url)
-        if r.status_code != 200:
-            raise Exception('Request {} failed with status code: {}'.format(url, r.status_code))
-
-        print '[GBFSClient] hit network, recieved {} bytes'.format(len(r.content))
-        return r
 
