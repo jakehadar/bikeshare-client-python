@@ -142,6 +142,11 @@ class DiscoveryService(ClientBase):
         if len(self.systems) > 0:
             return self.systems.keys()
 
+    def system_information(self, system_id):
+        system = self.systems.get(system_id)
+        if system is not None:
+            return system.__dict__
+
     def instantiate_client(self, system_id, language=None):
         return DiscoveryService._client_cls(
             self.systems[system_id].auto_discovery_url,
