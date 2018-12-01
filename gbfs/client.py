@@ -1,6 +1,10 @@
 import csv
 import requests
 
+
+from gbfs import const
+
+
 class StringEnum:
     country_code       = 'Country Code'
     name               = 'Name'
@@ -8,6 +12,7 @@ class StringEnum:
     system_id          = 'System ID'
     url                = 'URL'
     auto_discovery_url = 'Auto-Discovery URL'
+
 
 class System(object):
     """Class describing a single GBFS system"""
@@ -30,7 +35,8 @@ class System(object):
 
         self.auto_discovery_url = kwargs.get(
             StringEnum.auto_discovery_url)
- 
+
+
 class ClientBase(object):
     """GBFS client base class"""
 
@@ -114,6 +120,7 @@ class GBFSClient(ClientBase):
 
         return r.json()
 
+
 class DiscoveryService(ClientBase):
     """GBFS client discovery service 
 
@@ -124,9 +131,14 @@ class DiscoveryService(ClientBase):
     """
     _systems_url = 'https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv'
     _default_language = 'en'
-    _client_cls = GBFSClient
+    _client_cls = None
+    _systems_provider_cls = None
 
     def __init__(self):
+
+        assert self._client_cls
+        assert self._systems_provider_cls
+
         self.systems = {}
 
         request = self._fetch(self._systems_url)
@@ -154,3 +166,58 @@ class DiscoveryService(ClientBase):
         )
     
  
+class SystemsProvider(object):
+    _system_cls = None
+
+    def __init__(self):
+        assert self._system_cls
+
+    @classmethod
+    def get_all(cls):
+        raise NotImplementedError
+
+
+class SystemsProviderHTTPS(SystemsProvider):
+    _systems_csv_url = None
+    _requests_module = None
+
+    def __init__(self):
+        assert self._systems_csv_url
+        assert self._requests_module
+        super(self.__class__, self).__init__()
+
+    def get_all(self):
+        response = self._requests_module.get(self._systems_csv_url)
+        if response.status_code != 200:
+            raise RuntimeError('HTTPS request for {} failed with status code {}' \
+                               .format(self._systems_csv_url, response.status_code))
+        reader = csv.DictReader(response.iter_lines(decode_unicode=True))
+
+        return [self._system_cls(**kwargs) for kwargs in reader]
+
+
+class SystemsProviderLocal(SystemsProvider):
+    _systems_csv_url = None
+
+    def __init__(self):
+        assert self._systems_csv_url
+        super(self.__class__, self).__init__()
+
+    def get_all(self):
+        with open(self._systems_csv_url, 'r') as f:
+            reader = csv.DictReader(f.readlines())
+
+        return [self._system_cls(**kwargs) for kwargs in reader]
+
+
+# Runtime dependency configuration
+
+SystemsProvider._system_cls = System
+
+SystemsProviderLocal._systems_csv_url = const.gbfs_systems_csv_local_filepath
+
+SystemsProviderHTTPS._systems_csv_url = const.gbfs_systems_csv_remote_url
+SystemsProviderHTTPS._requests_module = requests
+
+DiscoveryService._systems_provider_impl = SystemsProviderHTTPS
+DiscoveryService._gbfs_client_impl = GBFSClient
