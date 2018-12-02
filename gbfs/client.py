@@ -3,6 +3,7 @@ import requests
 
 
 from gbfs.data.fetchers import RemoteJSONFetcher
+from gbfs.const import gbfs_client_default_language
 
 
 __all__ = ['GBFSClient']
@@ -11,8 +12,11 @@ __all__ = ['GBFSClient']
 class GBFSClient(object):
     _json_fetcher = RemoteJSONFetcher()
     _posix_to_datetime_func = datetime.datetime.utcfromtimestamp
+    _default_language = gbfs_client_default_language
 
-    def __init__(self, url, language, json_fetcher=None):
+    def __init__(self, url, language=None, json_fetcher=None):
+        language = language or self._default_language
+
         if json_fetcher:
             self._json_fetcher = json_fetcher
 
@@ -27,10 +31,14 @@ class GBFSClient(object):
         languages = data.keys()
         if language not in languages:
             raise Exception('Language must be one of: {}'.format(','.join(languages)))
+
+        self.language = language
         
         feeds = data[language].get('feeds')
         if feeds is None:
-            raise Exception('GBFS missing required key path: "data.{}.feeds"'.format(language))
+            raise Exception('GBFS missing required json path: "data.{}.feeds"'.format(language))
+
+        self.auto_discovery_url = url
 
         self.feeds = dict(
             map(lambda feed: (feed.get('name'), feed.get('url')), feeds)
@@ -52,3 +60,6 @@ class GBFSClient(object):
             data['last_updated'] = self._posix_to_datetime_func(last_updated)
 
         return data
+
+    def __repr__(self):
+        return "{}('{}', '{}')".format(self.__class__.__name__, self.auto_discovery_url, self.language)

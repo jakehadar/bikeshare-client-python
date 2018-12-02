@@ -1,12 +1,8 @@
 import os
 import sys
 
-# TODO: Make this dynamic
-root_path = '/Users/jameshadar/dev/GBFSClient'
 
-
-package_root_dirname = 'gbfs'
-package_root_dirpath = os.path.join(root_path, package_root_dirname)
+package_root_dirpath = os.path.abspath(os.path.dirname(__file__))
 assert os.path.exists(package_root_dirpath)
 
 package_static_dirname = 'static'
@@ -33,3 +29,6 @@ class gbfs_systems_csv_fields:
     system_id          = 'System ID'
     url                = 'URL'
     auto_discovery_url = 'Auto-Discovery URL'
+
+
+gbfs_client_default_language = 'en'
