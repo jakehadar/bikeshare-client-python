@@ -1,13 +1,4 @@
-from gbfs.providers import systems_provider_default
-
-
-class SystemsCSVFields:
-    country_code       = 'Country Code'
-    name               = 'Name'
-    location           = 'Location'
-    system_id          = 'System ID'
-    url                = 'URL'
-    auto_discovery_url = 'Auto-Discovery URL'
+import requests
 
 
 class System(object):
@@ -33,24 +24,16 @@ class System(object):
             SystemsCSVFields.auto_discovery_url)
 
 
-class ClientBase(object):
-    """GBFS client base class"""
-
-    @staticmethod
-    def _fetch(url):
-        """Fires off a GET request against url"""
-        r = requests.get(url)
-        return r
-
-
-class GBFSClient(ClientBase):
+class GBFSClient(object):
     """GBFS client
 
     Methods
     -------
     request_feed(feed_name)
         Fetches json feed from server.
-    """    
+    """
+
+    _requests_module = None
 
     def __init__(self, url, language):
         """Constructs a GBFSClient
@@ -66,9 +49,10 @@ class GBFSClient(ClientBase):
         -------
         GBFSClient
         """
-        super(GBFSClient, self).__init__()
 
-        r = self._fetch(url)
+        assert self._requests_module
+
+        r = self._requests_module.get(url)
         
         data = r.json().get('data')
         if data is None:
@@ -112,63 +96,8 @@ class GBFSClient(ClientBase):
         if url is None:
             raise Exception('Feed name must be one of: {}'.format(','.join(self.feeds.keys())))
 
-        r = self._fetch(url)
+        r = self._requests_module.get(url)
 
         return r.json()
 
-
-class DiscoveryService(ClientBase):
-    """GBFS client discovery service"""
-
-    _default_language = 'en'
-    _client_cls = None
-    _systems_provider = None
-    _system_attrs = None
-
-    def __init__(self, run_on_init=True):
-        assert self._client_cls
-        assert self._systems_provider
-        assert self._system_attrs
-
-        self._systems_cache = {}
-
-        if run_on_init:
-            self._get_and_cache_all_systems()
-
-    def _get_and_cache_all_systems(self):
-        try:
-            systems = self._systems_provider.get_all()
-        except:
-            raise
-
-        for system in systems:
-            system_id = system.get(self._system_attrs.system_id)
-            if system_id is None:
-                raise RuntimeError('Unexpected systems data format.')
-            self._systems_cache[system_id] = system
-
-
-    @property
-    def system_ids(self):
-        if self._systems_cache:
-            return list(self._systems_cache.keys())
-
-    def system_information(self, system_id):
-        return self._systems_cache.get(system_id)
-
-    def instantiate_client(self, system_id, language=None):
-        system = self._systems_cache.get(system_id)
-        if system:
-            system_url = system.get(self._system_attrs.auto_discovery_url)
-            if system_url:
-                try:
-                    client = self._client_cls(system_url, language if language else self._default_language)
-                except:
-                    raise RuntimeError('Could not instantiate client with system url: {}'.format(system_url))
-                return client
-
-# Runtime config
-
-DiscoveryService._system_attrs = SystemsCSVFields
-DiscoveryService._client_cls = GBFSClient
-DiscoveryService._systems_provider = systems_provider_default
+GBFSClient._requests_module = requests
