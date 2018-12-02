@@ -8,14 +8,14 @@ class FileFetcher(metaclass=abc.ABCMeta):
         pass
 
 
-class LocalFileFetcher(FileFetcher):
+class LocalCSVFetcher(FileFetcher):
     def fetch(self, url):
         with open(url, 'r') as f:
             data = f.readlines()
         return data
 
 
-class RemoteFileFetcher(FileFetcher):
+class RemoteCSVFetcher(FileFetcher):
     _requests_module = None
 
     def __init__(self, requests_module=None):
@@ -32,4 +32,4 @@ class RemoteFileFetcher(FileFetcher):
                                .format(url, response.status_code))
         return list(response.iter_lines(decode_unicode=True))
 
-RemoteFileFetcher._requests_module = requests
+RemoteCSVFetcher._requests_module = requests

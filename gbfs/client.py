@@ -1,55 +1,10 @@
 import requests
 
 
-class System(object):
-    """Class describing a single GBFS system"""
-
-    def __init__(self, **kwargs):
-        self.country_code = kwargs.get(
-            SystemsCSVFields.country_code)
-        
-        self.name = kwargs.get(
-            SystemsCSVFields.country_code)
-
-        self.location = kwargs.get(
-            SystemsCSVFields.location)
-
-        self.system_id = kwargs.get(
-            SystemsCSVFields.system_id)
-
-        self.url = kwargs.get(
-            SystemsCSVFields.url)
-
-        self.auto_discovery_url = kwargs.get(
-            SystemsCSVFields.auto_discovery_url)
-
-
 class GBFSClient(object):
-    """GBFS client
-
-    Methods
-    -------
-    request_feed(feed_name)
-        Fetches json feed from server.
-    """
-
     _requests_module = None
 
     def __init__(self, url, language):
-        """Constructs a GBFSClient
-
-        Parameters
-        ----------
-        url : str
-            Full url path to gbfs.json (auto-discovery file) that links to other feed files.
-        language : str
-            The language feed was published in, (i.e "en", "fr", etc.).
-
-        Returns
-        -------
-        GBFSClient
-        """
-
         assert self._requests_module
 
         r = self._requests_module.get(url)
@@ -72,29 +27,12 @@ class GBFSClient(object):
         
     @property
     def feed_names(self):
-        """Feed names available for instantiated system
-
-        Returns
-        -------
-        str
-        """
-        return self.feeds.keys()
+        return list(self.feeds.keys())
 
     def request_feed(self, feed_name):
-        """Requests json feed from server
-
-        Parameters
-        ----------
-        feed_name : str
-            Name of feed to request
-
-        Returns
-        -------
-        dict
-        """
         url = self.feeds.get(feed_name)
         if url is None:
-            raise Exception('Feed name must be one of: {}'.format(','.join(self.feeds.keys())))
+            raise Exception('Feed name must be one of: {}'.format(','.join(self.feed_names)))
 
         r = self._requests_module.get(url)
 

@@ -23,33 +23,33 @@ class dummy_response_404:
         yield '404: Not Found'
 
 
-def test_local_file_fetcher():
+def test_local_csv_fetcher():
     from gbfs.const import gbfs_systems_csv_local_filepath
-    from gbfs.data.fetchers import LocalFileFetcher
+    from gbfs.data.fetchers import LocalCSVFetcher
 
-    fetcher = LocalFileFetcher()
+    fetcher = LocalCSVFetcher()
 
     assert fetcher.fetch(gbfs_systems_csv_local_filepath)
 
 
-def test_remote_file_fetcher_400():
+def test_remote_csv_fetcher_400():
     from gbfs.const import gbfs_systems_csv_remote_url
-    from gbfs.data.fetchers import RemoteFileFetcher
+    from gbfs.data.fetchers import RemoteCSVFetcher
 
-    RemoteFileFetcher._requests_module = dummy_requests_module(dummy_response_200())
+    RemoteCSVFetcher._requests_module = dummy_requests_module(dummy_response_200())
 
-    fetcher = RemoteFileFetcher()
+    fetcher = RemoteCSVFetcher()
 
     assert fetcher.fetch(gbfs_systems_csv_remote_url)
 
 
-def test_remote_file_fetcher_404():
+def test_remote_csv_fetcher_404():
     from gbfs.const import gbfs_systems_csv_remote_url
-    from gbfs.data.fetchers import RemoteFileFetcher
+    from gbfs.data.fetchers import RemoteCSVFetcher
 
-    RemoteFileFetcher._requests_module = dummy_requests_module(dummy_response_404())
+    RemoteCSVFetcher._requests_module = dummy_requests_module(dummy_response_404())
 
-    fetcher = RemoteFileFetcher()
+    fetcher = RemoteCSVFetcher()
 
     with pytest.raises(RuntimeError):
         fetcher.fetch(gbfs_systems_csv_remote_url)
