@@ -13,7 +13,7 @@ class SystemDataProvider(DataProvider):
     _csv_dict_reader = None
 
     def __init__(self, file_fetcher, csv_url):
-        self._file_fetcher= file_fetcher
+        self._file_fetcher = file_fetcher
         self._csv_url = csv_url
         assert self._csv_dict_reader
 

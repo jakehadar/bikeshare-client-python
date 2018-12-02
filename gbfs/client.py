@@ -1,15 +1,21 @@
 import requests
 
 
+from gbfs.data.fetchers import RemoteJSONFetcher, LocalJSONFetcher
+
+
+__all__ = ['GBFSClient']
+
+
 class GBFSClient(object):
-    _requests_module = None
+    _json_fetcher = None
 
     def __init__(self, url, language):
-        assert self._requests_module
+        assert self._json_fetcher
 
-        r = self._requests_module.get(url)
+        r = self._json_fetcher.fetch(url)
         
-        data = r.json().get('data')
+        data = r.get('data')
         if data is None:
             raise Exception('GBFS missing required key path: "data"')
         
@@ -34,8 +40,6 @@ class GBFSClient(object):
         if url is None:
             raise Exception('Feed name must be one of: {}'.format(','.join(self.feed_names)))
 
-        r = self._requests_module.get(url)
+        return self._json_fetcher.fetch(url)
 
-        return r.json()
-
-GBFSClient._requests_module = requests
+GBFSClient._json_fetcher = RemoteJSONFetcher()
