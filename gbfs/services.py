@@ -53,7 +53,7 @@ class SystemDiscoveryService(object):
         if system:
             system_url = system.get(self._system_attrs.auto_discovery_url)
             if system_url:
-                self._instantiate_client(system_url, language if language else self._default_language)
+                return self._instantiate_client(system_url, language if language else self._default_language)
 
     def _instantiate_client(self, system_url, language, json_fetcher=None):
         return self._client_cls(system_url, language, json_fetcher=json_fetcher)
