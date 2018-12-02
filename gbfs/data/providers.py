@@ -10,7 +10,7 @@ class DataProvider(metaclass=abc.ABCMeta):
 
 
 class SystemDataProvider(DataProvider):
-    _csv_dict_reader = None
+    _csv_dict_reader = csv.DictReader
 
     def __init__(self, file_fetcher, csv_url):
         self._file_fetcher = file_fetcher
@@ -23,9 +23,6 @@ class SystemDataProvider(DataProvider):
         for item in reader:
             assert item.__class__.__name__ == 'OrderedDict'
             yield dict(item)
-        raise StopIteration
-
-SystemDataProvider._csv_dict_reader = csv.DictReader
 
 
 class StationDataProvider(DataProvider):

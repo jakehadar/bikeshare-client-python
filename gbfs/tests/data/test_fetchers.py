@@ -44,9 +44,7 @@ def test_remote_csv_fetcher_400():
     from gbfs.const import gbfs_systems_csv_remote_url
     from gbfs.data.fetchers import RemoteCSVFetcher
 
-    RemoteCSVFetcher._requests_module = dummy_requests_module(dummy_response_csv_200())
-
-    fetcher = RemoteCSVFetcher()
+    fetcher = RemoteCSVFetcher(requests_module=dummy_requests_module(dummy_response_csv_200()))
 
     assert fetcher.fetch(gbfs_systems_csv_remote_url)
 
@@ -55,9 +53,7 @@ def test_remote_csv_fetcher_404():
     from gbfs.const import gbfs_systems_csv_remote_url
     from gbfs.data.fetchers import RemoteCSVFetcher
 
-    RemoteCSVFetcher._requests_module = dummy_requests_module(dummy_response_csv_404())
-
-    fetcher = RemoteCSVFetcher()
+    fetcher = RemoteCSVFetcher(requests_module=dummy_requests_module(dummy_response_csv_404()))
 
     with pytest.raises(RuntimeError):
         fetcher.fetch(gbfs_systems_csv_remote_url)
@@ -75,8 +71,6 @@ def test_local_json_fetcher():
 def test_remote_json_fetcher():
     from gbfs.data.fetchers import RemoteJSONFetcher
 
-    RemoteJSONFetcher._requests_module = dummy_requests_module(dummy_response_json())
-
-    fetcher = RemoteJSONFetcher()
+    fetcher = RemoteJSONFetcher(requests_module=dummy_requests_module(dummy_response_json()))
 
     assert fetcher.fetch('http://path/to/gbfs.json')

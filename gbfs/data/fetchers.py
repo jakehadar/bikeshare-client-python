@@ -17,11 +17,10 @@ class LocalCSVFetcher(FileFetcher):
 
 
 class RemoteCSVFetcher(FileFetcher):
-    _requests_module = None
+    _requests_module = requests
 
     def __init__(self, requests_module=None):
         if requests_module:
-            assert hasattr(requests_module, 'get')
             self._requests_module = requests_module
 
         assert self._requests_module
@@ -33,13 +32,13 @@ class RemoteCSVFetcher(FileFetcher):
                                .format(url, response.status_code))
         return list(response.iter_lines(decode_unicode=True))
 
-RemoteCSVFetcher._requests_module = requests
-
 
 class LocalJSONFetcher(FileFetcher):
-    _json_module = None
+    _json_module = json
 
-    def __init__(self):
+    def __init__(self, json_module=None):
+        if json_module:
+            self._json_module = json_module
         assert self._json_module
 
     def fetch(self, url):
@@ -47,13 +46,13 @@ class LocalJSONFetcher(FileFetcher):
             data = self._json_module.load(f)
         return data
 
-LocalJSONFetcher._json_module = json
-
 
 class RemoteJSONFetcher(FileFetcher):
-    _requests_module = None
+    _requests_module = requests
 
-    def __init__(self):
+    def __init__(self, requests_module=None):
+        if requests_module:
+            self._requests_module = requests_module
         assert self._requests_module
 
     def fetch(self, url):
@@ -62,5 +61,3 @@ class RemoteJSONFetcher(FileFetcher):
             raise RuntimeError('HTTPS request for {} failed with status code {}' \
                                .format(url, response.status_code))
         return response.json()
-
-RemoteJSONFetcher._requests_module = requests

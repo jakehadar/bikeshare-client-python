@@ -1,15 +1,19 @@
+import os
+
+
 import pytest
 
 
 def test_system_discovery_service():
+    from gbfs.const import package_tests_fixtures_dirpath
     from gbfs.providers import systems_provider_local_csv
     from gbfs.services import SystemDiscoveryService
+    from gbfs.client import GBFSClient
+    from gbfs.data.fetchers import LocalJSONFetcher
 
-    # TODO: use mock classes for _systems_provider and _client_cls
-    SystemDiscoveryService._systems_provider = systems_provider_local_csv
-
-    ds = SystemDiscoveryService()
+    ds = SystemDiscoveryService(systems_provider=systems_provider_local_csv)
 
     assert ds.system_ids
-    assert ds.system_information(ds.system_ids[0])
-    assert ds.instantiate_client(ds.system_ids[0])
+    assert ds.system_information('ABU')
+    assert ds._instantiate_client(os.path.join(package_tests_fixtures_dirpath, 'gbfs.json'), 'en',
+                                  json_fetcher=LocalJSONFetcher())

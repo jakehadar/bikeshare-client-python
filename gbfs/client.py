@@ -1,16 +1,19 @@
 import requests
 
 
-from gbfs.data.fetchers import RemoteJSONFetcher, LocalJSONFetcher
+from gbfs.data.fetchers import RemoteJSONFetcher
 
 
 __all__ = ['GBFSClient']
 
 
 class GBFSClient(object):
-    _json_fetcher = None
+    _json_fetcher = RemoteJSONFetcher()
 
-    def __init__(self, url, language):
+    def __init__(self, url, language, json_fetcher=None):
+        if json_fetcher:
+            self._json_fetcher = json_fetcher
+
         assert self._json_fetcher
 
         r = self._json_fetcher.fetch(url)
@@ -41,5 +44,3 @@ class GBFSClient(object):
             raise Exception('Feed name must be one of: {}'.format(','.join(self.feed_names)))
 
         return self._json_fetcher.fetch(url)
-
-GBFSClient._json_fetcher = RemoteJSONFetcher()

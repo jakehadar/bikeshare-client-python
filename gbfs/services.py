@@ -14,7 +14,10 @@ class SystemDiscoveryService(object):
     _systems_provider = None
     _system_attrs = None
 
-    def __init__(self, run_on_init=True):
+    def __init__(self, run_on_init=True, systems_provider=None):
+        if systems_provider:
+            self._systems_provider = systems_provider
+
         assert self._client_cls
         assert self._systems_provider
         assert self._system_attrs
@@ -50,11 +53,10 @@ class SystemDiscoveryService(object):
         if system:
             system_url = system.get(self._system_attrs.auto_discovery_url)
             if system_url:
-                try:
-                    client = self._client_cls(system_url, language if language else self._default_language)
-                except:
-                    raise RuntimeError('Could not instantiate client with system url: {}'.format(system_url))
-                return client
+                self._instantiate_client(system_url, language if language else self._default_language)
+
+    def _instantiate_client(self, system_url, language, json_fetcher=None):
+        return self._client_cls(system_url, language, json_fetcher=json_fetcher)
 
 # Runtime config
 SystemDiscoveryService._system_attrs = gbfs_systems_csv_fields
