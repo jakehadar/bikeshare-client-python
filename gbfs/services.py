@@ -39,13 +39,16 @@ class SystemDiscoveryService(object):
                 raise RuntimeError('Unexpected systems data format.')
             self._systems_cache[system_id] = system
 
+    @property
+    def systems(self):
+        return list(self._systems_cache.values())
 
     @property
     def system_ids(self):
         if self._systems_cache:
             return list(self._systems_cache.keys())
 
-    def system_information(self, system_id):
+    def get_system_by_id(self, system_id):
         return self._systems_cache.get(system_id)
 
     def instantiate_client(self, system_id, language=None):
