@@ -1,11 +1,7 @@
-import csv
-import requests
+from gbfs.providers import systems_provider_default
 
 
-from gbfs import const
-
-
-class StringEnum:
+class SystemsCSVFields:
     country_code       = 'Country Code'
     name               = 'Name'
     location           = 'Location'
@@ -19,22 +15,22 @@ class System(object):
 
     def __init__(self, **kwargs):
         self.country_code = kwargs.get(
-            StringEnum.country_code)
+            SystemsCSVFields.country_code)
         
         self.name = kwargs.get(
-            StringEnum.country_code)
+            SystemsCSVFields.country_code)
 
         self.location = kwargs.get(
-            StringEnum.location)
+            SystemsCSVFields.location)
 
         self.system_id = kwargs.get(
-            StringEnum.system_id)
+            SystemsCSVFields.system_id)
 
         self.url = kwargs.get(
-            StringEnum.url)
+            SystemsCSVFields.url)
 
         self.auto_discovery_url = kwargs.get(
-            StringEnum.auto_discovery_url)
+            SystemsCSVFields.auto_discovery_url)
 
 
 class ClientBase(object):
@@ -122,102 +118,57 @@ class GBFSClient(ClientBase):
 
 
 class DiscoveryService(ClientBase):
-    """GBFS client discovery service 
+    """GBFS client discovery service"""
 
-    Attributes
-    ----------
-    systems_url : str
-        Url to systems.csv file containing all known systems publishing GBFS feeds.
-    """
-    _systems_url = 'https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv'
     _default_language = 'en'
     _client_cls = None
-    _systems_provider_cls = None
+    _systems_provider = None
+    _system_attrs = None
 
-    def __init__(self):
-
+    def __init__(self, run_on_init=True):
         assert self._client_cls
-        assert self._systems_provider_cls
+        assert self._systems_provider
+        assert self._system_attrs
 
-        self.systems = {}
+        self._systems_cache = {}
 
-        request = self._fetch(self._systems_url)
-        if request.status_code == 200:
-            reader = csv.DictReader(request.iter_lines())
-            self.systems = {}
-            for kwargs in reader:
-                system = System(**kwargs)
-                self.systems[system.system_id] = system
+        if run_on_init:
+            self._get_and_cache_all_systems()
+
+    def _get_and_cache_all_systems(self):
+        try:
+            systems = self._systems_provider.get_all()
+        except:
+            raise
+
+        for system in systems:
+            system_id = system.get(self._system_attrs.system_id)
+            if system_id is None:
+                raise RuntimeError('Unexpected systems data format.')
+            self._systems_cache[system_id] = system
+
 
     @property
     def system_ids(self):
-        if len(self.systems) > 0:
-            return self.systems.keys()
+        if self._systems_cache:
+            return list(self._systems_cache.keys())
 
     def system_information(self, system_id):
-        system = self.systems.get(system_id)
-        if system is not None:
-            return system.__dict__
+        return self._systems_cache.get(system_id)
 
     def instantiate_client(self, system_id, language=None):
-        return DiscoveryService._client_cls(
-            self.systems[system_id].auto_discovery_url,
-            language if language else DiscoveryService._default_language,
-        )
-    
- 
-class SystemsProvider(object):
-    _system_cls = None
+        system = self._systems_cache.get(system_id)
+        if system:
+            system_url = system.get(self._system_attrs.auto_discovery_url)
+            if system_url:
+                try:
+                    client = self._client_cls(system_url, language if language else self._default_language)
+                except:
+                    raise RuntimeError('Could not instantiate client with system url: {}'.format(system_url))
+                return client
 
-    def __init__(self):
-        assert self._system_cls
+# Runtime config
 
-    @classmethod
-    def get_all(cls):
-        raise NotImplementedError
-
-
-class SystemsProviderHTTPS(SystemsProvider):
-    _systems_csv_url = None
-    _requests_module = None
-
-    def __init__(self):
-        assert self._systems_csv_url
-        assert self._requests_module
-        super(self.__class__, self).__init__()
-
-    def get_all(self):
-        response = self._requests_module.get(self._systems_csv_url)
-        if response.status_code != 200:
-            raise RuntimeError('HTTPS request for {} failed with status code {}' \
-                               .format(self._systems_csv_url, response.status_code))
-        reader = csv.DictReader(response.iter_lines(decode_unicode=True))
-
-        return [self._system_cls(**kwargs) for kwargs in reader]
-
-
-class SystemsProviderLocal(SystemsProvider):
-    _systems_csv_url = None
-
-    def __init__(self):
-        assert self._systems_csv_url
-        super(self.__class__, self).__init__()
-
-    def get_all(self):
-        with open(self._systems_csv_url, 'r') as f:
-            reader = csv.DictReader(f.readlines())
-
-        return [self._system_cls(**kwargs) for kwargs in reader]
-
-
-# Runtime dependency configuration
-
-SystemsProvider._system_cls = System
-
-SystemsProviderLocal._systems_csv_url = const.gbfs_systems_csv_local_filepath
-
-SystemsProviderHTTPS._systems_csv_url = const.gbfs_systems_csv_remote_url
-SystemsProviderHTTPS._requests_module = requests
-
-DiscoveryService._systems_provider_impl = SystemsProviderHTTPS
-DiscoveryService._gbfs_client_impl = GBFSClient
+DiscoveryService._system_attrs = SystemsCSVFields
+DiscoveryService._client_cls = GBFSClient
+DiscoveryService._systems_provider = systems_provider_default
