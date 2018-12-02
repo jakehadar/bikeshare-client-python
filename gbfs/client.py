@@ -1,3 +1,4 @@
+import datetime
 import requests
 
 
@@ -9,6 +10,7 @@ __all__ = ['GBFSClient']
 
 class GBFSClient(object):
     _json_fetcher = RemoteJSONFetcher()
+    _posix_to_datetime_func = datetime.datetime.utcfromtimestamp
 
     def __init__(self, url, language, json_fetcher=None):
         if json_fetcher:
@@ -43,4 +45,10 @@ class GBFSClient(object):
         if url is None:
             raise Exception('Feed name must be one of: {}'.format(','.join(self.feed_names)))
 
-        return self._json_fetcher.fetch(url)
+        data = self._json_fetcher.fetch(url)
+
+        last_updated = data.get('last_updated')
+        if last_updated:
+            data['last_updated'] = self._posix_to_datetime_func(last_updated)
+
+        return data

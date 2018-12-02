@@ -1,5 +1,6 @@
 import abc
 import csv
+import datetime
 import requests
 
 
@@ -26,4 +27,17 @@ class SystemDataProvider(DataProvider):
 
 
 class StationDataProvider(DataProvider):
-    pass
+    _posix_to_datetime_func = datetime.datetime.utcfromtimestamp
+
+    def __init__(self, json_fetcher, json_url):
+        self._json_fetcher = json_fetcher
+        self._json_url = json_url
+
+    def get_all(self, json_url):
+        data = self._json_fetcher.fetch(self._json_url)
+
+        last_updated = data.get('last_updated')
+        if last_updated:
+            data['last_updated'] = self._posix_to_datetime_func(last_updated)
+
+        return data
