@@ -1,7 +1,6 @@
 import abc
 import csv
 import datetime
-import requests
 
 
 class DataProvider(metaclass=abc.ABCMeta):
