@@ -13,10 +13,10 @@ Python.
  pip install gbfs-client
 ```
 
-Example
--------
+Examples
+--------
 
-Exploring bikeshare systems interactively using system discovery:
+Searching for bikeshare systems in WI and NY using the system discovery service:
 
 ``` {.sourceCode .python}
 >>> from gbfs.services import SystemDiscoveryService
@@ -33,7 +33,7 @@ Exploring bikeshare systems interactively using system discovery:
 {'Country Code': 'US', 'Name': 'Citi Bike', 'Location': 'NYC, NY', 'System ID': 'NYC', 'URL': 'https://www.citibikenyc.com', 'Auto-Discovery URL': 'https://gbfs.citibikenyc.com/gbfs/gbfs.json'}
 ```
 
-Instantiating a GBFS client for a bikeshare system and exploring its available feeds:
+Instantiating a GBFS client for Citi Bike (NYC) and exploring its available feeds:
 
 ```
 >>> client = ds.instantiate_client('NYC')
@@ -43,11 +43,16 @@ Instantiating a GBFS client for a bikeshare system and exploring its available f
 {'last_updated': datetime.datetime(2018, 12, 3, 1, 49, 55), 'ttl': 10, 'data': {'alerts': []}}
 ```
 
-Instantiating a GBFS client with a known system auto-discovery URL, and searching for some interesting stations:
+Instantiating a GBFS client directly (without the discovery service) using the auto-discovery URL for Citi Bike (found earlier):
 
 ```{.sourceCode .python}
 >>> from gbfs.client import GBFSClient
->>> client = GBFSClient('https://gbfs.citibikenyc.com/gbfs/gbfs.json', 'en') # 'Auto-Discovery URL' for Citi Bike (NYC)
+>>> client = GBFSClient('https://gbfs.citibikenyc.com/gbfs/gbfs.json', 'en')
+```
+
+Searching Citi Bike's station_information feed for two specific stations, one near 49th/8th ave and the other near Barclay/Church:
+
+```
 >>> stations = client.request_feed('station_information').get('data').get('stations')
 >>> [(x.get('name'), x.get('station_id')) for x in stations if '49' in x.get('name')]
 [('Broadway & W 49 St', '173'), ('W 49 St & 8 Ave', '450'), ('49 Ave & 21 St', '3606')]
@@ -59,7 +64,6 @@ Instantiating a GBFS client with a known system auto-discovery URL, and searchin
 >>> work = next(filter(lambda x: x.get('station_id') == '417', stations))
 >>> work
 {'station_id': '417', 'name': 'Barclay St & Church St', 'lat': 40.71291224, 'lon': -74.01020234, 'capacity': 23}
-
 ```
 
 Building a small app to poll a station's live status and print a nice message:
