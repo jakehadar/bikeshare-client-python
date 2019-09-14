@@ -1,6 +1,7 @@
 import csv
 import datetime
 
+import csv23
 import six
 import abc
 
@@ -12,7 +13,7 @@ class DataProvider(object):
 
 
 class SystemDataProvider(DataProvider):
-    _csv_dict_reader = csv.DictReader
+    _csv_dict_reader = csv23.DictReader
 
     def __init__(self, file_fetcher, csv_url):
         self._file_fetcher = file_fetcher

@@ -1,9 +1,10 @@
 import abc
 import json
-import sys
 
+import io
 import six
 import requests
+
 
 @six.add_metaclass(abc.ABCMeta)
 class FileFetcher(object):
@@ -14,14 +15,9 @@ class FileFetcher(object):
 
 class LocalCSVFetcher(FileFetcher):
     def fetch(self, url):
-        if sys.version_info.major == 2:
-            with open(url, 'rt') as f:
-                data = [x.encode('utf-8') for x in f.readlines()]
-            return data
-        else:
-            with open(url, 'rt', encoding='utf-8') as f:
-                data = f.readlines()
-            return data
+        with io.open(url, 'rt', encoding='utf-8') as f:
+            data = f.readlines()
+        return data
 
 
 class RemoteCSVFetcher(FileFetcher):
@@ -50,14 +46,9 @@ class LocalJSONFetcher(FileFetcher):
         assert self._json_module
 
     def fetch(self, url):
-        if sys.version_info.major == 2:
-            with open(url, 'r') as f:
-                data = self._json_module.load(f)
-            return data
-        else:
-            with open(url, 'r', encoding='utf-8') as f:
-                data = self._json_module.load(f)
-            return data
+        with io.open(url, 'r', encoding='utf-8') as f:
+            data = self._json_module.load(f)
+        return data
 
 
 class RemoteJSONFetcher(FileFetcher):
