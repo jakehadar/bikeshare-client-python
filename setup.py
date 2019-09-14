@@ -13,6 +13,7 @@ setup(
     author_email='jake1025@gmail.com',
     description='Python client for discovering and capturing GBFS bikeshare feeds.',
     long_description=long_description,
+    include_package_data=True,
     long_description_content_type='text/markdown',
     url='https://github.com/jakehadar/gbfs-client',
     keywords='gbfs bikeshare client',
