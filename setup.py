@@ -1,8 +1,10 @@
 from setuptools import setup, find_packages
 
-
 with open('README.md', 'r') as f:
     long_description = f.read()
+
+with open('requirements.txt', 'r') as f:
+    requirements = [req.strip() for req in f.readlines()] 
 
 setup(
     name='gbfs-client',
@@ -22,5 +24,5 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python',
     ],
-    install_requires=['requests', 'pytest'],
+    install_requires=requirements,
 )
