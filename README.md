@@ -5,6 +5,18 @@ A Python client for discovering and capturing live bikeshare data feeds made pub
 
 This module is built with the intention of laying some of the groundwork for supporting more complex applications built around the consumption of live bikeshare data.
 
+
+System coverage
+---------------
+
+As of writing, this Python client supports 256 bikeshare systems across 218 cities in 36 countries.
+
+The list of bikeshare systems supported by this client is [actively maintained by the GBFS community](https://github.com/NABSA/gbfs/blob/master/README.md#systems-implementing-gbfs) and can be found here:
+* [systems.csv](https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv)
+
+The code example below demonstrates how to discover and filter these systems programatically.
+
+
 Installation
 ------------
 
