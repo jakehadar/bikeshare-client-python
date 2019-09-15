@@ -8,7 +8,7 @@ with open('requirements.txt', 'r') as f:
 
 setup(
     name='gbfs-client',
-    version='0.0.1',
+    version='0.0.2',
     author='Jake Hadar',
     author_email='jake1025@gmail.com',
     description='Python client for discovering and capturing GBFS bikeshare feeds.',
@@ -19,7 +19,6 @@ setup(
     keywords='gbfs bikeshare client',
     packages=find_packages(),
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
         'Natural Language :: English',

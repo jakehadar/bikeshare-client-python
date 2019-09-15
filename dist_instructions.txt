@@ -1,3 +1,6 @@
+Clean:
+setup.py clean --all
+
 1. Run this:
 
 setup.py sdist bdist_wheel
