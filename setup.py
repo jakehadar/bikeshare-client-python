@@ -1,10 +1,12 @@
+import io
 from setuptools import setup, find_packages
 
-with open('README.md', 'r') as f:
-    long_description = f.read()
-
-with open('requirements.txt', 'r') as f:
-    requirements = [req.strip() for req in f.readlines()] 
+def read_requirements(extension=None):
+    ext = '' if extension is None else '-{}'.format(extension)
+    filename = 'requirements{}.txt'.format(ext)
+    with io.open(filename, encoding='utf-8') as f:
+        requirements = [r.strip() for r in f.readlines()]
+        return requirements
 
 setup(
     name='gbfs-client',
@@ -12,7 +14,7 @@ setup(
     author='Jake Hadar',
     author_email='jake1025@gmail.com',
     description='Python client for discovering and capturing GBFS bikeshare feeds.',
-    long_description=long_description,
+    long_description=io.open('README.md', encoding='utf-8').read(),
     include_package_data=True,
     long_description_content_type='text/markdown',
     url='https://github.com/jakehadar/gbfs-client',
@@ -24,5 +26,9 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python',
     ],
-    install_requires=requirements,
+    install_requires=read_requirements(),
+    extras_require={
+        'dev': read_requirements('dev'),
+        'test': read_requirements('test')
+    }
 )

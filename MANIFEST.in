@@ -1,5 +1,6 @@
 include requirements.txt
-include requirements_dev.txt
+include requirements-dev.txt
+include requirements-test.txt
 include README.md
 include LICENSE.txt
 include gbfs/static/systems.csv
