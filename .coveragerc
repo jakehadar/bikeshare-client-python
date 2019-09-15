@@ -1,2 +1,6 @@
 [run]
-omit = .eggs/*
+omit = 
+    .eggs/*
+    gbfs/examples/*
+    gbfs/static/*
+source = gbfs
