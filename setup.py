@@ -16,6 +16,7 @@ setup(
     description='Python client for discovering and capturing GBFS bikeshare feeds.',
     long_description=io.open('README.md', encoding='utf-8').read(),
     include_package_data=True,
+    package_data={'gbfs': ['gbfs/static/systems.csv']},
     long_description_content_type='text/markdown',
     url='https://github.com/jakehadar/gbfs-client',
     keywords='gbfs bikeshare client',
@@ -27,6 +28,8 @@ setup(
         'Programming Language :: Python',
     ],
     install_requires=read_requirements(),
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     extras_require={
         'dev': read_requirements('dev'),
         'test': read_requirements('test')
