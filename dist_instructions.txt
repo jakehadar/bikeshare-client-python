@@ -1,0 +1,16 @@
+Clean:
+setup.py clean --all
+
+1. Run this:
+
+setup.py sdist bdist_wheel
+
+2a. Upload to PyPi Test instance:
+
+twine upload --repository-url https://test.pypi.org/legacy/ dist/*
+pip install --index-url https://test.pypi.org/simple/ example_pkg
+
+2b. Upload to PyPi Prod instance:
+
+twine upload dist/*
+pip install your-package

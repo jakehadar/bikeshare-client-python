@@ -8,7 +8,6 @@ def test_system_discovery_service():
     from gbfs.const import package_tests_fixtures_dirpath
     from gbfs.providers import systems_provider_local_csv
     from gbfs.services import SystemDiscoveryService
-    from gbfs.client import GBFSClient
     from gbfs.data.fetchers import LocalJSONFetcher
 
     ds = SystemDiscoveryService(systems_provider=systems_provider_local_csv)

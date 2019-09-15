@@ -1,9 +1,13 @@
 import abc
-import requests
 import json
 
+import io
+import six
+import requests
 
-class FileFetcher(metaclass=abc.ABCMeta):
+
+@six.add_metaclass(abc.ABCMeta)
+class FileFetcher(object):
     @abc.abstractmethod
     def fetch(url):
         pass
@@ -11,7 +15,7 @@ class FileFetcher(metaclass=abc.ABCMeta):
 
 class LocalCSVFetcher(FileFetcher):
     def fetch(self, url):
-        with open(url, 'r') as f:
+        with io.open(url, 'rt', encoding='utf-8') as f:
             data = f.readlines()
         return data
 
@@ -42,7 +46,7 @@ class LocalJSONFetcher(FileFetcher):
         assert self._json_module
 
     def fetch(self, url):
-        with open(url, 'r') as f:
+        with io.open(url, 'r', encoding='utf-8') as f:
             data = self._json_module.load(f)
         return data
 

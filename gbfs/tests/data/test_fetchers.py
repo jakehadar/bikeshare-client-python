@@ -31,15 +31,6 @@ class dummy_response_json:
         return {'last_updated': 1543720674, 'ttl': 10, 'data': {'en': {'feeds': [{'name': 'station_status', 'url': 'https://api-core.bikeshare.ae/gbfs/en/station_status.json'}]}}}
 
 
-def test_local_csv_fetcher():
-    from gbfs.const import gbfs_systems_csv_local_filepath
-    from gbfs.data.fetchers import LocalCSVFetcher
-
-    fetcher = LocalCSVFetcher()
-
-    assert fetcher.fetch(gbfs_systems_csv_local_filepath)
-
-
 def test_remote_csv_fetcher_400():
     from gbfs.const import gbfs_systems_csv_remote_url
     from gbfs.data.fetchers import RemoteCSVFetcher

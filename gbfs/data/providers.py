@@ -1,16 +1,19 @@
-import abc
 import csv
 import datetime
 
+import csv23
+import six
+import abc
 
-class DataProvider(metaclass=abc.ABCMeta):
+@six.add_metaclass(abc.ABCMeta)
+class DataProvider(object):
     @abc.abstractmethod
     def get_all(self):
         pass
 
 
 class SystemDataProvider(DataProvider):
-    _csv_dict_reader = csv.DictReader
+    _csv_dict_reader = csv23.DictReader
 
     def __init__(self, file_fetcher, csv_url):
         self._file_fetcher = file_fetcher
@@ -21,7 +24,6 @@ class SystemDataProvider(DataProvider):
         data = self._file_fetcher.fetch(self._csv_url)
         reader = self._csv_dict_reader(data)
         for item in reader:
-            assert item.__class__.__name__ == 'OrderedDict'
             yield dict(item)
 
 
