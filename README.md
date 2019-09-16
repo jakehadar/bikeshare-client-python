@@ -1,5 +1,5 @@
-bikeshare-client
-----------------
+bikeshare-client-python
+-----------------------
 [![Build Status](https://travis-ci.org/jakehadar/bikeshare-client.svg?branch=master)](https://travis-ci.org/jakehadar/bikeshare-client)
 [![Coverage Status](https://coveralls.io/repos/github/jakehadar/bikeshare-client/badge.svg?branch=coverage)](https://coveralls.io/github/jakehadar/bikeshare-client?branch=coverage)
 
