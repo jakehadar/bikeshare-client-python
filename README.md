@@ -35,7 +35,7 @@ Examples
 
 A sample implementation (Flask JSON endpoint) can be found here:
 
-* [bikeshare-demo-app](https://github.com/jakehadar/bikeshare-demo-app)
+* [bikeshare-json-api](https://github.com/jakehadar/bikeshare-json-api)
 
 
 Interactive walk-through
