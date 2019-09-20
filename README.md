@@ -1,6 +1,6 @@
 bikeshare-client-python
 -----------------------
-[![Build Status](https://travis-ci.org/jakehadar/bikeshare-client.svg?branch=master)](https://travis-ci.org/jakehadar/bikeshare-client)
+[![Build Status](https://travis-ci.org/jakehadar/bikeshare-client-python.svg?branch=master)](https://travis-ci.org/jakehadar/bikeshare-client-python)
 [![Coverage Status](https://coveralls.io/repos/github/jakehadar/bikeshare-client/badge.svg?branch=coverage)](https://coveralls.io/github/jakehadar/bikeshare-client?branch=coverage)
 
 A Python client for discovering and capturing live bikeshare data feeds made publically available by [hundreds of global bikeshare providers](https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv) in accordance with the [General Bikeshare Feed Specification (GBFS)](https://github.com/NABSA/gbfs/blob/master/gbfs.md) standard.
@@ -32,6 +32,14 @@ Python.
 
 Examples
 --------
+
+A sample implementation (Flask JSON endpoint) can be found here:
+
+* [bikeshare-demo-app](https://github.com/jakehadar/bikeshare-demo-app)
+
+
+Interactive walk-through
+------------------------
 
 Searching for bikeshare systems in WI and NY using the system discovery service:
 
