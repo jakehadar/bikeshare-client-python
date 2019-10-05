@@ -95,7 +95,7 @@ class UploadCommand(Command):
         self.status('pip install {0}'.format(NAME))
 
         self.status('Pushing git tags...')
-        os.system('git tag {0}'.format(VERSION))
+        os.system('git tag v{0}'.format(VERSION))
         os.system('git push --tags')
 
         sys.exit()
