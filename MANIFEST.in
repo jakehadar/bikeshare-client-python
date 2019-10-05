@@ -4,3 +4,5 @@ include requirements-test.txt
 include README.md
 include LICENSE.txt
 include gbfs/static/systems.csv
+include versioneer.py
+include gbfs/_version.py
