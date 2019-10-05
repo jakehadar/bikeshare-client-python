@@ -42,24 +42,41 @@ class UploadCommand(Command):
         """Prints things in bold."""
         print('\033[1m{0}\033[0m'.format(s))
 
-    def initialize_options(self):
-        self.test = False
-        self.upload_args = ''
-        self.install_args = ''
+    def abort(self):
+        self.status('Aborted upload.')
+        sys.exit(1)
 
-    def finalize_options(self):
-        if self.test:
-            self.upload_args = '--repository-url https://test.pypi.org/legacy/'
-            self.install_args = '--index-url https://test.pypi.org/simple/'
+    def validate_deps(self):
+        _error = False
 
-    def run(self):
         try:
             import twine
         except ImportError:
-            self.status('Please install twine to use upload command.')
-            self.status('  $ pip install twine')
-            self.status('Aborting.')
-            sys.exit(1)
+            self.status('Please `pip install twine` to use upload command.')
+            _error = True
+
+        try:
+            import bumpversion
+        except ImportError:
+            self.status('Please `pip install bumpversion` to use upload command.')
+            _error = True
+
+        if _error:
+            self.abort()
+
+
+    def initialize_options(self):
+        self.test = False
+        self.upload_cmd = 'twine upload dist/*'
+        self.install_cmd = 'pip install {0}'.format(NAME)
+
+    def finalize_options(self):
+        if self.test:
+            self.upload_cmd = 'twine upload --repository-url https://test.pypi.org/legacy/ dist/*'
+            self.install_cmd = 'pip install --index-url https://test.pypi.org/simple/ {0}'.format(NAME)
+
+    def run(self):
+        self.validate_deps()
 
         self.status('Cleaning build...')
         os.system('{0} setup.py clean --all'.format(sys.executable))
@@ -71,23 +88,21 @@ class UploadCommand(Command):
             pass
 
         self.status('Building Source and Wheel (universal) distribution...')
-        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
-        
-        if self.test:
-            self.status('Uploading the package to PyPI (test instance) via Twine...')
-            os.system('twine upload --repository-url https://test.pypi.org/legacy/ dist/*')
+        res = os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
 
-            self.status('Installation command:')
-            self.status('pip install --index-url https://test.pypi.org/simple/ {0}'.format(NAME))
-            sys.exit()
+        if res != 0:
+            self.abort()
 
         self.status('Uploading the package to PyPI via Twine...')
-        os.system('twine upload dist/*')
-            
-        self.status('Installation command:')
-        self.status('pip install {0}'.format(NAME))
+        res = os.system(self.upload_cmd)
 
-        sys.exit()
+        if res != 0:
+            self.abort()
+            
+        self.status('Upload success!')
+        print('Installation command:'.format(self.install_cmd))
+
+        sys.exit(0)
 
 
 cmdclass = versioneer.get_cmdclass()
