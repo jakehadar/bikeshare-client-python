@@ -1,6 +1,8 @@
 import io
 from setuptools import setup, find_packages
 
+import versioneer
+
 def read_requirements(extension=None):
     ext = '' if extension is None else '-{}'.format(extension)
     filename = 'requirements{}.txt'.format(ext)
@@ -10,11 +12,12 @@ def read_requirements(extension=None):
 
 setup(
     name='gbfs-client',
-    version='0.0.2',
+    version=versioneer.get_version(),
     author='Jake Hadar',
     author_email='jake1025@gmail.com',
     description='Python client for discovering and capturing GBFS bikeshare feeds.',
     long_description=io.open('README.md', encoding='utf-8').read(),
+    cmdclass=versioneer.get_cmdclass(),
     include_package_data=True,
     package_data={'gbfs': ['gbfs/static/systems.csv']},
     long_description_content_type='text/markdown',
