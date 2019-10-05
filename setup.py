@@ -1,7 +1,25 @@
+# See setup.py for humans: https://github.com/navdeep-G/setup.py
+
 import io
-from setuptools import setup, find_packages
+import os
+import sys
+import shutil
+from setuptools import setup, find_packages, Command
 
 import versioneer
+
+
+NAME = 'gbfs-client'
+DESCRIPTION = 'Python client for discovering and capturing GBFS bikeshare feeds.'
+URL = 'https://github.com/jakehadar/gbfs-client'
+AUTHOR = 'Jake Hadar'
+EMAIL = 'jake1025@gmail.com'
+REQUIRES_PYTHON = '>=2.7'
+VERSION = versioneer.get_version()
+
+
+here = os.path.abspath(os.path.dirname(__file__))
+
 
 def read_requirements(extension=None):
     ext = '' if extension is None else '-{}'.format(extension)
@@ -10,20 +28,88 @@ def read_requirements(extension=None):
         requirements = [r.strip() for r in f.readlines()]
         return requirements
 
+
+class UploadCommand(Command):
+    """Support setup.py upload."""
+
+    description = 'Build and publish the package.'
+    user_options = [
+        ('test', 't', 'Upload to PyPI test instance.')
+    ]
+
+    @staticmethod
+    def status(s):
+        """Prints things in bold."""
+        print('\033[1m{0}\033[0m'.format(s))
+
+    def initialize_options(self):
+        self.test = False
+        self.upload_args = ''
+        self.install_args = ''
+
+    def finalize_options(self):
+        if self.test:
+            self.upload_args = '--repository-url https://test.pypi.org/legacy/'
+            self.install_args = '--index-url https://test.pypi.org/simple/'
+
+    def run(self):
+        if 'dirty' in VERSION:
+            self.status('Uncommitted changes in {}'.format(VERSION))
+            self.status('Aborting.')
+            sys.exit()
+
+        self.status('Cleaning build...')
+        os.system('{0} setup.py clean --all'.format(sys.executable))
+
+        try:
+            self.status('Removing previous builds...')
+            shutil.rmtree(os.path.join(here, 'dist'))
+        except OSError:
+            pass
+
+        self.status('Building Source and Wheel (universal) distribution...')
+        os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+        
+        if self.test:
+            self.status('Uploading the package to PyPI (test instance) via Twine...')
+            os.system('twine upload --repository-url https://test.pypi.org/legacy/ dist/*')
+
+            self.status('Installation command:')
+            self.status('pip install --index-url https://test.pypi.org/simple/ {0}'.format(NAME))
+            sys.exit()
+
+        self.status('Uploading the package to PyPI via Twine...')
+        os.system('twine upload dist/*')
+            
+        self.status('Installation command:')
+        self.status('pip install --index-url https://test.pypi.org/simple/ {0}'.format(NAME))
+
+        self.status('Pushing git tags...')
+        os.system('git tag v{0}'.format(VERSION))
+        os.system('git push --tags')
+
+        sys.exit()
+
+
+cmdclass = versioneer.get_cmdclass()
+cmdclass.update({'upload': UploadCommand})
+
+
 setup(
-    name='gbfs-client',
-    version=versioneer.get_version(),
-    author='Jake Hadar',
-    author_email='jake1025@gmail.com',
-    description='Python client for discovering and capturing GBFS bikeshare feeds.',
+    name=NAME,
+    version=VERSION,
+    author=AUTHOR,
+    author_email=EMAIL,
+    description=DESCRIPTION,
+    url=URL,
+    python_requires=REQUIRES_PYTHON,
     long_description=io.open('README.md', encoding='utf-8').read(),
-    cmdclass=versioneer.get_cmdclass(),
+    long_description_content_type='text/markdown',
+    cmdclass=cmdclass,
     include_package_data=True,
     package_data={'gbfs': ['gbfs/static/systems.csv']},
-    long_description_content_type='text/markdown',
-    url='https://github.com/jakehadar/gbfs-client',
     keywords='gbfs bikeshare client',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
@@ -36,5 +122,8 @@ setup(
     extras_require={
         'dev': read_requirements('dev'),
         'test': read_requirements('test')
-    }
+    },
+    # entry_points={
+    #     'console_scripts': ['mycli=mymodule:cli']
+    # }
 )
