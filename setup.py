@@ -81,22 +81,11 @@ class UploadCommand(Command):
             self.status('pip install --index-url https://test.pypi.org/simple/ {0}'.format(NAME))
             sys.exit()
 
-        if '+' in VERSION:
-            commits_ahead = VERSION.split('+')[1].split('.')[0]
-            self.status('Build is {0} commits ahead of master.'.format(commits_ahead))
-            self.status('Aborting.')
-
-            sys.exit(1)
-
         self.status('Uploading the package to PyPI via Twine...')
         os.system('twine upload dist/*')
             
         self.status('Installation command:')
         self.status('pip install {0}'.format(NAME))
-
-        self.status('Pushing git tags...')
-        os.system('git tag v{0}'.format(VERSION))
-        os.system('git push --tags')
 
         sys.exit()
 
