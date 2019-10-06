@@ -123,15 +123,17 @@ class UploadCommand(Command):
 
         current_version = read_current_version()
         if VERSION != current_version:
+            self.status('New patch detected: {0}'.format(VERSION))
+            self.status('Existing version:   {0}'.format(current_version))
+
             self.status('Bumping version (patch)...')
-            print('Existing version: {}'.format(current_version))
             res = os.system('{0} bumpversion patch'.format(sys.executable))
 
             if res != 0:
                 self.abort()
 
             new_version = read_current_version()
-            print('New version: {}'.format(new_version))
+            self.status('New version:        {0}'.format(new_version))
 
         self.status('Uploading the package to PyPI via Twine...')
         res = os.system(self.upload_cmd)
