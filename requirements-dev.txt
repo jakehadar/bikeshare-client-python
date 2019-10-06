@@ -2,3 +2,4 @@ tox
 coverage
 versioneer
 twine
+bumpversion
