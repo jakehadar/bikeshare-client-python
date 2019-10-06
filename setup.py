@@ -6,6 +6,7 @@ import sys
 import shutil
 from setuptools import setup, find_packages, Command
 
+# Python 2/3 compat.
 try:
     from configparser import RawConfigParser
 except ImportError:
@@ -138,6 +139,7 @@ class UploadCommand(Command):
 
             new_version = read_current_version()
             self.status('New version:        {0}'.format(new_version))
+            os.system('git push --tags')
 
         self.status('Uploading the package to PyPI via Twine...')
         res = os.system(self.upload_cmd)
