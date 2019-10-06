@@ -127,7 +127,7 @@ class UploadCommand(Command):
             self.status('New patch detected: {0}'.format(VERSION))
 
             self.status('Bumping version...')
-            res = os.system('{0} bumpversion patch'.format(sys.executable))
+            res = os.system('bumpversion patch')
 
             if res != 0:
                 self.abort()
