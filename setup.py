@@ -4,8 +4,12 @@ import io
 import os
 import sys
 import shutil
-from configparser import RawConfigParser
 from setuptools import setup, find_packages, Command
+
+try:
+    from configparser import RawConfigParser
+except ImportError:
+    from ConfigParser import RawConfigParser
 
 import versioneer
 
