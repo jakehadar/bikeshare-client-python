@@ -123,10 +123,10 @@ class UploadCommand(Command):
 
         current_version = read_current_version()
         if VERSION != current_version:
-            self.status('New patch detected: {0}'.format(VERSION))
             self.status('Existing version:   {0}'.format(current_version))
+            self.status('New patch detected: {0}'.format(VERSION))
 
-            self.status('Bumping version (patch)...')
+            self.status('Bumping version...')
             res = os.system('{0} bumpversion patch'.format(sys.executable))
 
             if res != 0:
