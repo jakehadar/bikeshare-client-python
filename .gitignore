@@ -126,3 +126,4 @@ dmypy.json
 # Other
 *.py.swp
 *.idea
+*.swp
