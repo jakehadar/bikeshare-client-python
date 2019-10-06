@@ -111,21 +111,6 @@ class UploadCommand(Command):
             if res != 0:
                 self.abort()
 
-        self.status('Cleaning build...')
-        os.system('{0} setup.py clean --all'.format(sys.executable))
-
-        try:
-            self.status('Removing previous builds...')
-            shutil.rmtree(os.path.join(here, 'dist'))
-        except OSError:
-            pass
-
-        self.status('Building Source and Wheel (universal) distribution...')
-        res = os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
-
-        if res != 0:
-            self.abort()
-
         current_version = read_current_version()
         if VERSION != current_version:
             self.status('Existing version:   {0}'.format(current_version))
@@ -140,6 +125,21 @@ class UploadCommand(Command):
             new_version = read_current_version()
             self.status('New version:        {0}'.format(new_version))
             os.system('git push --tags')
+
+        self.status('Cleaning build...')
+        os.system('{0} setup.py clean --all'.format(sys.executable))
+
+        try:
+            self.status('Removing previous builds...')
+            shutil.rmtree(os.path.join(here, 'dist'))
+        except OSError:
+            pass
+
+        self.status('Building Source and Wheel (universal) distribution...')
+        res = os.system('{0} setup.py sdist bdist_wheel --universal'.format(sys.executable))
+
+        if res != 0:
+            self.abort()
 
         self.status('Uploading the package to PyPI via Twine...')
         res = os.system(self.upload_cmd)
