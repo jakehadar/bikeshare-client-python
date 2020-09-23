@@ -1,12 +1,17 @@
 import datetime
 import requests
 
+from string import Formatter
 
 from gbfs.data.fetchers import RemoteJSONFetcher
 from gbfs.const import gbfs_client_default_language
 
 
 __all__ = ['GBFSClient']
+
+
+def parse_tags(s):
+    return [t[1] for t in Formatter().parse(s) if t[1] is not None]
 
 
 class GBFSClient(object):
@@ -48,10 +53,14 @@ class GBFSClient(object):
     def feed_names(self):
         return list(self.feeds.keys())
 
-    def request_feed(self, feed_name):
+    def request_feed(self, feed_name, **kwargs):
         url = self.feeds.get(feed_name)
         if url is None:
             raise Exception('Feed name must be one of: {}'.format(','.join(self.feed_names)))
+
+        if kwargs:
+            assert sorted(kwargs.keys()) == sorted(parse_tags(url))
+            url = url.format(**kwargs)
 
         data = self._json_fetcher.fetch(url)
 
