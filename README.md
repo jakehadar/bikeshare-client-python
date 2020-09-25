@@ -114,7 +114,7 @@ Barclay St & Church St is currently at 91% capacity with 21 bikes available to r
 Change log
 ----------
 
-###0.1.8
+### 0.1.8
 
 Add support for bespoke feeds with tokenized URL templates.
 
@@ -137,6 +137,6 @@ c = GBFSClient('https://barcelona.publicbikesystem.net/ube/gbfs/v1/gbfs.json')
 c.request_feed('nearby_stations', station_id=2)
 ```
 
-###0.1.5
+### 0.1.5
 
 Baseline release.
