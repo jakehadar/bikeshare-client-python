@@ -109,3 +109,34 @@ W 49 St & 8 Ave is currently at 16% capacity with 10 bikes available to rent.
 >>> print_status_message(work)
 Barclay St & Church St is currently at 91% capacity with 21 bikes available to rent.
 ```
+
+
+Change log
+----------
+
+**0.1.8**
+
+Add support for bespoke feeds with tokenized URL templates.
+
+For example, Barcelona's supplemental `'nearby_stations'` URL is tokenized with `{station_id}`:
+```
+{
+    "name": "nearby_stations",
+    "url": "https://barcelona-sp.publicbikesystem.net/ube/gbfs/v1/en/station_information/{station_id}/nearby_stations"
+}
+```
+The consumer is required to interpolate `station_id` into the URL string before requesting the feed.
+
+`GBFSClient`'s `request_feed` method now accepts kwargs for formatting URL templates of this kind.
+
+Example:
+
+```
+c = GBFSClient('https://barcelona.publicbikesystem.net/ube/gbfs/v1/gbfs.json')
+
+c.request_feed('nearby_stations', station_id=2)
+```
+
+**0.1.5**
+
+Baseline release.
