@@ -17,7 +17,7 @@ def example():
     print('')
 
     # Select a system with a known system_id
-    citibike_system_id = 'NYC'
+    citibike_system_id = 'lyft_nyc'
     print('Showing system information for a known station_id: {}'.format(citibike_system_id))
     system = ds.get_system_by_id(citibike_system_id)
     print(system)

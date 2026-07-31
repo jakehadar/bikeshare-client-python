@@ -47,25 +47,25 @@ Searching for bikeshare systems in WI and NY using the system discovery service:
 >>> from gbfs.services import SystemDiscoveryService
 >>> ds = SystemDiscoveryService()
 >>> len(ds.system_ids)
-221
+1519
 >>> [x.get('System ID') for x in ds.systems if 'WI' in x.get('Location')]
-['bcycle_bublr', 'bcycle_madison']
+['bcycle_bublr', 'bcycle_madison', 'provider-null-milwaukee']
 >>> ds.get_system_by_id('bcycle_madison')
-{'Country Code': 'US', 'Name': 'Madison B-cycle', 'Location': 'Madison, WI', 'System ID': 'bcycle_madison', 'URL': 'https://madison.bcycle.com', 'Auto-Discovery URL': 'https://gbfs.bcycle.com/bcycle_madison/gbfs.json'}
+{'Country Code': 'US', 'Name': 'Madison B-cycle', 'Location': 'Madison, WI', 'System ID': 'bcycle_madison', 'URL': 'https://madison.bcycle.com', 'Auto-Discovery URL': 'https://gbfs.bcycle.com/bcycle_madison/gbfs.json', 'Supported Versions': '1.1', 'Authentication Info URL': '', 'Authentication Type': '', 'Authentication Parameter Name': ''}
 >>> [x.get('System ID') for x in ds.systems if 'citi bike' in x.get('Name').lower()]
-['NYC', 'jump_nyc', 'lime_new_york', 'reddy_bikeshare', 'sobi_long_beach']
->>> ds.get_system_by_id('NYC')
-{'Country Code': 'US', 'Name': 'Citi Bike', 'Location': 'NYC, NY', 'System ID': 'NYC', 'URL': 'https://www.citibikenyc.com', 'Auto-Discovery URL': 'https://gbfs.citibikenyc.com/gbfs/gbfs.json'}
+['lyft_nyc']
+>>> ds.get_system_by_id('lyft_nyc')
+{'Country Code': 'US', 'Name': 'Citi Bike', 'Location': 'New York, NY', 'System ID': 'lyft_nyc', 'URL': 'https://www.citibikenyc.com', 'Auto-Discovery URL': 'https://gbfs.citibikenyc.com/gbfs/2.3/gbfs.json', 'Supported Versions': '2.3', 'Authentication Info URL': '', 'Authentication Type': '', 'Authentication Parameter Name': ''}
 ```
 
 Instantiating a GBFS client for Citi Bike (NYC) and exploring its available feeds:
 
 ```
->>> client = ds.instantiate_client('NYC')
+>>> client = ds.instantiate_client('lyft_nyc')
 >>> client.feed_names
-['system_alerts', 'system_information', 'station_information', 'station_status', 'system_regions']
+['gbfs', 'system_information', 'station_information', 'station_status', 'free_bike_status', 'system_hours', 'system_calendar', 'system_regions', 'system_pricing_plans', 'system_alerts', 'gbfs_versions', 'vehicle_types']
 >>> client.request_feed('system_alerts')
-{'last_updated': datetime.datetime(2018, 12, 3, 1, 49, 55), 'ttl': 10, 'data': {'alerts': []}}
+{'data': {'alerts': []}, 'last_updated': datetime.datetime(2026, 7, 31, 15, 11, 43), 'ttl': 60, 'version': '2.3'}
 ```
 
 Instantiating a GBFS client directly (without the discovery service) using the auto-discovery URL for Citi Bike (found earlier):
