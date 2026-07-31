@@ -15,6 +15,7 @@ def test_system_discovery_service():
     assert ds.systems
     assert ds.system_ids
     assert len(ds.systems) == len(ds.system_ids)
-    assert ds.get_system_by_id('ABU')
+    first_id = next(iter(ds.system_ids))
+    assert ds.get_system_by_id(first_id)
     assert ds._instantiate_client(os.path.join(package_tests_fixtures_dirpath, 'gbfs.json'), 'en',
                                   json_fetcher=LocalJSONFetcher())
