@@ -1,0 +1,57 @@
+name: Update systems.csv
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # every Monday at 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch latest systems.csv
+        run: |
+          curl -sSLf -o /tmp/systems.csv https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv
+
+      - name: Validate downloaded file before replacing local copy
+        run: |
+          lines=$(wc -l < /tmp/systems.csv)
+          header=$(head -1 /tmp/systems.csv)
+          echo "Downloaded file has $lines lines"
+          echo "Header: $header"
+
+          if [ "$lines" -lt 100 ]; then
+            echo "::error::Downloaded systems.csv has suspiciously few lines ($lines); refusing to update."
+            exit 1
+          fi
+
+          case "$header" in
+            "Country Code,Name,Location,System ID,URL,Auto-Discovery URL"*) ;;
+            *)
+              echo "::error::Downloaded systems.csv has an unexpected header; refusing to update."
+              exit 1
+              ;;
+          esac
+
+          cp /tmp/systems.csv gbfs/static/systems.csv
+
+      - name: Open pull request if systems.csv changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Update bundled systems.csv from upstream NABSA/gbfs"
+          title: "Update bundled systems.csv from upstream"
+          body: |
+            Automated refresh of `gbfs/static/systems.csv` from
+            https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv
+
+            Opened by the scheduled `Update systems.csv` workflow. See #13 for background
+            on why this file needs to stay in sync with upstream.
+          branch: update-systems-csv
+          delete-branch: true
+          labels: automated
