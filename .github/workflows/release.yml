@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: 'Version part to bump'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install build and release tooling
+        run: pip install -e ".[test]" bumpversion build
+
+      - name: Run tests
+        run: pytest
+
+      - name: Bump version
+        run: bumpversion "${{ github.event.inputs.bump_type }}"
+
+      - name: Push version bump commit and tag
+        run: git push --follow-tags
+
+      - name: Build distributions
+        run: python -m build
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag=$(git describe --tags --abbrev=0)
+          gh release create "$tag" dist/* --title "$tag" --generate-notes
