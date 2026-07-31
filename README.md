@@ -168,6 +168,7 @@ Add support for Python 3.9 through 3.14, and drop support for Python 2 and versi
 * Replaced the dormant Travis CI setup with GitHub Actions, testing across Python 3.9-3.14.
 * Extended `tox` to cover the same matrix, skipping any interpreters not installed locally.
 * Added a Contributing section to this README outlining development environment setup, running tests, and using `tox`.
+* Fixed New York City's outdated `NYC` system_id (now `lyft_nyc`) in the README and example script — thanks to [@kjcole](https://github.com/kjcole) for reporting and fixing ([#8](https://github.com/jakehadar/bikeshare-client-python/issues/8)).
 
 ### 0.1.8
 
