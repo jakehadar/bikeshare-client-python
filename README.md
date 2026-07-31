@@ -11,7 +11,7 @@ This module is built with the intention of laying some of the groundwork for sup
 System coverage
 ---------------
 
-As of writing, this Python client supports 256 bikeshare systems across 218 cities in 36 countries.
+As of writing, this Python client supports every bikeshare system published in the GBFS community's systems directory (over 1.5k systems across dozens of countries and regions).
 
 The list of bikeshare systems supported by this client is [actively maintained by the GBFS community](https://github.com/NABSA/gbfs/blob/master/README.md#systems-implementing-gbfs) and can be found here:
 * [systems.csv](https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv)
