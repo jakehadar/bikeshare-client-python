@@ -1,7 +1,7 @@
 bikeshare-client-python
 -----------------------
 [![Test](https://github.com/jakehadar/bikeshare-client-python/actions/workflows/test.yml/badge.svg)](https://github.com/jakehadar/bikeshare-client-python/actions/workflows/test.yml)
-[![Coverage Status](https://coveralls.io/repos/github/jakehadar/bikeshare-client/badge.svg?branch=coverage)](https://coveralls.io/github/jakehadar/bikeshare-client?branch=coverage)
+[![Coverage Status](https://coveralls.io/repos/github/jakehadar/bikeshare-client-python/badge.svg?branch=master)](https://coveralls.io/github/jakehadar/bikeshare-client-python?branch=master)
 
 A Python client for discovering and capturing live bikeshare data feeds made publically available by [hundreds of global bikeshare providers](https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv) in accordance with the [General Bikeshare Feed Specification (GBFS)](https://github.com/NABSA/gbfs/blob/master/gbfs.md) standard.
 

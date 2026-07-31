@@ -32,3 +32,14 @@ jobs:
 
       - name: Report coverage
         run: coverage report -m
+
+      - name: Generate lcov coverage report
+        if: matrix.python-version == '3.13'
+        run: coverage lcov -o coverage.lcov
+
+      - name: Upload coverage to Coveralls
+        if: matrix.python-version == '3.13'
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: coverage.lcov
