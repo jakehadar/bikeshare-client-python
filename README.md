@@ -1,6 +1,6 @@
 bikeshare-client-python
 -----------------------
-[![Build Status](https://travis-ci.org/jakehadar/bikeshare-client-python.svg?branch=master)](https://travis-ci.org/jakehadar/bikeshare-client-python)
+[![Test](https://github.com/jakehadar/bikeshare-client-python/actions/workflows/test.yml/badge.svg)](https://github.com/jakehadar/bikeshare-client-python/actions/workflows/test.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jakehadar/bikeshare-client/badge.svg?branch=coverage)](https://coveralls.io/github/jakehadar/bikeshare-client?branch=coverage)
 
 A Python client for discovering and capturing live bikeshare data feeds made publically available by [hundreds of global bikeshare providers](https://raw.githubusercontent.com/NABSA/gbfs/master/systems.csv) in accordance with the [General Bikeshare Feed Specification (GBFS)](https://github.com/NABSA/gbfs/blob/master/gbfs.md) standard.
@@ -111,8 +111,64 @@ Barclay St & Church St is currently at 91% capacity with 21 bikes available to r
 ```
 
 
+Contributing
+------------
+
+This project targets Python 3.7+, and is tested in CI against 3.9 through 3.14.
+
+**Set up a development environment**
+
+Clone the repo and install it in editable mode with the `dev` and `test` extras, which pull in `tox`, `coverage`, `pytest`, and related tooling:
+
+``` {.sourceCode .bash}
+git clone https://github.com/jakehadar/bikeshare-client-python.git
+cd bikeshare-client-python
+python3 -m venv venv
+source venv/bin/activate
+pip install -e ".[dev,test]"
+```
+
+**Run the tests**
+
+``` {.sourceCode .bash}
+pytest
+```
+
+With coverage:
+
+``` {.sourceCode .bash}
+coverage run -m pytest
+coverage report -m
+```
+
+**Run the full tox matrix**
+
+`tox` runs the test suite across every supported Python version (3.9-3.14) that's installed on your machine. Any versions you don't have installed locally are skipped; the full matrix still runs in CI on every push and pull request.
+
+``` {.sourceCode .bash}
+tox
+```
+
+To test against a single interpreter, editable-installed in place (`usedevelop = True`):
+
+``` {.sourceCode .bash}
+tox -e dev
+```
+
 Change log
 ----------
+
+### 0.1.9
+
+Add support for Python 3.9 through 3.14, and drop support for Python 2 and versions of Python 3 below 3.7.
+
+* Removed the `six` dependency and the Python 2/3 compatibility shims it enabled.
+* Fixed an install-breaking bug in the vendored `versioneer.py` on Python 3.12+ (`configparser.SafeConfigParser` was removed in 3.12).
+* Replaced the unmaintained `pytest-runner`/`setup.py test` integration with running `pytest` directly.
+* Replaced the dormant Travis CI setup with GitHub Actions, testing across Python 3.9-3.14.
+* Extended `tox` to cover the same matrix, skipping any interpreters not installed locally.
+* Added a Contributing section to this README outlining development environment setup, running tests, and using `tox`.
+* Fixed New York City's outdated `NYC` system_id (now `lyft_nyc`) in the README and example script — thanks to [@kjcole](https://github.com/kjcole) for reporting and fixing ([#8](https://github.com/jakehadar/bikeshare-client-python/issues/8)).
 
 ### 0.1.8
 

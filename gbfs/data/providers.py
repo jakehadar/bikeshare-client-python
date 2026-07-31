@@ -2,11 +2,9 @@ import csv
 import datetime
 
 import csv23
-import six
 import abc
 
-@six.add_metaclass(abc.ABCMeta)
-class DataProvider(object):
+class DataProvider(abc.ABC):
     @abc.abstractmethod
     def get_all(self):
         pass

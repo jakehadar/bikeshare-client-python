@@ -2,12 +2,10 @@ import abc
 import json
 
 import io
-import six
 import requests
 
 
-@six.add_metaclass(abc.ABCMeta)
-class FileFetcher(object):
+class FileFetcher(abc.ABC):
     @abc.abstractmethod
     def fetch(url):
         pass
