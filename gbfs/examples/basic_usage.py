@@ -2,7 +2,7 @@ import datetime
 
 
 from gbfs.services import SystemDiscoveryService
-
+import pytz
 
 def example():
     ds = SystemDiscoveryService()
@@ -54,13 +54,11 @@ def example():
     statuses = station_status.get('data').get('stations')
     first_station_status = [s for s in statuses if s.get('station_id') == first_station.get('station_id')][0]
 
-    staleness = datetime.datetime.utcnow() - station_status.get('last_updated')
-
+    staleness = datetime.datetime.now(datetime.UTC)  - station_status.get('last_updated').replace(tzinfo=pytz.utc)
     print('Station {} has a total capacity of {} and (as of {} seconds ago) has {} bikes available for rent.'.format(
         first_station.get('name'), first_station.get('capacity'), staleness.seconds,
         first_station_status.get('num_bikes_available')))
     print('')
-
 
 
 if __name__ == '__main__':
