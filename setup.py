@@ -20,7 +20,7 @@ DESCRIPTION = 'Python client for discovering and capturing GBFS bikeshare feeds.
 URL = 'https://github.com/jakehadar/gbfs-client'
 AUTHOR = 'Jake Hadar'
 EMAIL = 'jake1025@gmail.com'
-REQUIRES_PYTHON = '>=2.7'
+REQUIRES_PYTHON = '>=3.7'
 VERSION = versioneer.get_version()
 
 
@@ -106,7 +106,7 @@ class UploadCommand(Command):
 
         if not self.skip_tests:
             self.status('Testing build...')
-            res = os.system('{0} setup.py test'.format(sys.executable))
+            res = os.system('{0} -m pytest'.format(sys.executable))
 
             if res != 0:
                 self.abort()
@@ -177,10 +177,17 @@ setup(
         'Intended Audience :: Developers',
         'Natural Language :: English',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
+        'Programming Language :: Python :: 3.14',
     ],
     install_requires=read_requirements(),
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'],
     extras_require={
         'dev': read_requirements('dev'),
         'test': read_requirements('test')
