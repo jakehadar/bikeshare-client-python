@@ -14,7 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
         include:
           # Python 3.9 is EOL and has no setup-python build for Ubuntu 26.04
           # (the current ubuntu-latest), so pin it to the last image that has one.
